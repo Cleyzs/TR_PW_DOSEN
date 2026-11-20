@@ -2,63 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JenisLayanan;
+use App\Support\Pesan;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class JenisLayananController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private function aturan(): array
+    {
+        return [
+            'nama'       => 'required|string|max:100',
+            'tarif'      => 'required|integer|min:0|max:100000000',
+            'keterangan' => 'nullable|string|max:255',
+        ];
+    }
+
+    private function atribut(): array
+    {
+        return ['nama' => 'Nama layanan', 'tarif' => 'Tarif', 'keterangan' => 'Keterangan'];
+    }
+
     public function index()
     {
-        //
+        $layanan = JenisLayanan::orderBy('nama')->get();
+        return view('layanan.index', compact('layanan'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('layanan.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate($this->aturan(), Pesan::umum(), $this->atribut());
+        JenisLayanan::create($data);
+        return redirect()->route('layanan.index')->with('sukses', 'Layanan berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(JenisLayanan $layanan)
     {
-        //
+        return view('layanan.edit', compact('layanan'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, JenisLayanan $layanan)
     {
-        //
+        $data = $request->validate($this->aturan(), Pesan::umum(), $this->atribut());
+        $layanan->update($data);
+        return redirect()->route('layanan.index')->with('sukses', 'Layanan diperbarui.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(JenisLayanan $layanan)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        try {
+            $layanan->delete();
+        } catch (QueryException $e) {
+            return back()->with('error', 'Layanan tidak bisa dihapus karena sudah dipakai di transaksi servis.');
+        }
+        return redirect()->route('layanan.index')->with('sukses', 'Layanan dihapus.');
     }
 }
