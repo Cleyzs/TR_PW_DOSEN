@@ -18,7 +18,7 @@ class BengkelSeeder extends Seeder
         // Akun admin (aman dijalankan berulang)
         User::updateOrCreate(
             ['email' => 'admin@bengkel.test'],
-            ['name' => 'Admin Bengkel', 'password' => Hash::make('password')]
+            ['name' => 'admin', 'password' => Hash::make('admin123')]
         );
 
         // Data contoh hanya diisi kalau tabel masih kosong
