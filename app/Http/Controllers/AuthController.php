@@ -19,16 +19,19 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $kredensial = $request->validate([
-            'email'    => 'required|email',
+            'username' => 'required|string',
             'password' => 'required',
-        ], Pesan::umum(), ['email' => 'Email', 'password' => 'Password']);
+        ], Pesan::umum(), ['username' => 'Username', 'password' => 'Password']);
 
-        if (Auth::attempt($kredensial, $request->boolean('ingat'))) {
+        if (Auth::attempt([
+            'name'     => $kredensial['username'],
+            'password' => $kredensial['password'],
+        ], $request->boolean('ingat'))) {
             $request->session()->regenerate();
             return redirect()->intended(route('dashboard'));
         }
 
-        return back()->withErrors(['email' => 'Email atau password salah.'])->onlyInput('email');
+        return back()->withErrors(['username' => 'Username atau password salah.'])->onlyInput('username');
     }
 
     public function logout(Request $request)
