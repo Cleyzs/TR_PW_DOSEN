@@ -2,63 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pelanggan;
+use App\Support\Pesan;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class PelangganController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private function aturan(): array
+    {
+        return [
+            'nama'   => 'required|string|max:100',
+            'no_hp'  => 'required|string|max:20',
+            'alamat' => 'nullable|string|max:255',
+        ];
+    }
+
+    private function atribut(): array
+    {
+        return ['nama' => 'Nama', 'no_hp' => 'No. HP', 'alamat' => 'Alamat'];
+    }
+
     public function index()
     {
-        //
+        $pelanggan = Pelanggan::withCount('kendaraan')->orderBy('nama')->get();
+        return view('pelanggan.index', compact('pelanggan'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('pelanggan.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate($this->aturan(), Pesan::umum(), $this->atribut());
+        Pelanggan::create($data);
+        return redirect()->route('pelanggan.index')->with('sukses', 'Pelanggan berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Pelanggan $pelanggan)
     {
-        //
+        return view('pelanggan.edit', compact('pelanggan'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Pelanggan $pelanggan)
     {
-        //
+        $data = $request->validate($this->aturan(), Pesan::umum(), $this->atribut());
+        $pelanggan->update($data);
+        return redirect()->route('pelanggan.index')->with('sukses', 'Data pelanggan diperbarui.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Pelanggan $pelanggan)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        try {
+            $pelanggan->delete();
+        } catch (QueryException $e) {
+            return back()->with('error', 'Pelanggan tidak bisa dihapus karena kendaraannya punya riwayat servis.');
+        }
+        return redirect()->route('pelanggan.index')->with('sukses', 'Pelanggan dihapus.');
     }
 }
