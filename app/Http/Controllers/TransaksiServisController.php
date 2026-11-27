@@ -2,63 +2,96 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JenisLayanan;
+use App\Models\Kendaraan;
+use App\Models\TransaksiServis;
+use App\Support\Pesan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransaksiServisController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Daftar transaksi, yang terbaru di atas
     public function index()
     {
-        //
+        $servis = TransaksiServis::with('kendaraan.pelanggan')
+            ->latest('tanggal')
+            ->latest('id')
+            ->get();
+
+        return view('servis.index', compact('servis'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Form tambah transaksi
     public function create()
     {
-        //
+        $kendaraan = Kendaraan::with('pelanggan')->orderBy('no_polisi')->get();
+        $layanan   = JenisLayanan::orderBy('nama')->get();
+
+        return view('servis.create', compact('kendaraan', 'layanan'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Validasi, hitung total, lalu simpan transaksi beserta detailnya
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'kendaraan_id' => 'required|exists:kendaraan,id',
+            'tanggal'      => 'required|date',
+            'keluhan'      => 'required|string|max:500',
+            'jumlah'       => 'required|array',
+            'jumlah.*'     => 'nullable|integer|min:0|max:99',
+        ], Pesan::umum(), [
+            'kendaraan_id' => 'Kendaraan',
+            'tanggal'      => 'Tanggal',
+            'keluhan'      => 'Keluhan',
+            'jumlah'       => 'Layanan',
+            'jumlah.*'     => 'Jumlah',
+        ]);
+
+        // Ambil hanya layanan yang jumlahnya lebih dari 0
+        $item = collect($data['jumlah'])->filter(fn ($jumlah) => (int) $jumlah > 0);
+
+        if ($item->isEmpty()) {
+            return back()
+                ->withErrors(['jumlah' => 'Pilih minimal satu layanan.'])
+                ->withInput();
+        }
+
+        // Kalau salah satu penyimpanan gagal, semuanya dibatalkan
+        DB::transaction(function () use ($data, $item) {
+            $transaksi = TransaksiServis::create([
+                'kendaraan_id' => $data['kendaraan_id'],
+                'tanggal'      => $data['tanggal'],
+                'keluhan'      => $data['keluhan'],
+            ]);
+
+            $total = 0;
+
+            foreach ($item as $layananId => $jumlah) {
+                $layanan = JenisLayanan::findOrFail($layananId);
+
+                $transaksi->detailServis()->create([
+                    'jenis_layanan_id' => $layanan->id,
+                    'harga'            => $layanan->tarif, // salin tarif saat ini
+                    'jumlah'           => (int) $jumlah,
+                ]);
+
+                $total += $layanan->tarif * (int) $jumlah;
+            }
+
+            $transaksi->update(['total_biaya' => $total]);
+        });
+
+        return redirect()->route('servis.index')
+            ->with('sukses', 'Transaksi servis berhasil dibuat.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Hapus transaksi, baris detail ikut terhapus (cascade di database)
+    public function destroy(TransaksiServis $servis)
     {
-        //
-    }
+        $servis->delete();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('servis.index')
+            ->with('sukses', 'Transaksi servis dihapus.');
     }
 }
