@@ -46,8 +46,14 @@ class LaporanController extends Controller
         $dari   = $request->dari;
         $sampai = $request->sampai;
 
-        return Pdf::loadView('laporan.pdf', compact('servis', 'total', 'dari', 'sampai'))
-            ->setPaper('a4', 'portrait')
-            ->download('laporan-servis.pdf');
+        $pdf = Pdf::loadView('laporan.pdf', compact('servis', 'total', 'dari', 'sampai'))
+            ->setPaper('a4', 'portrait');
+
+        // Buang output liar (warning/spasi) supaya file PDF tidak rusak
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        return $pdf->download('laporan-servis.pdf');
     }
 }
