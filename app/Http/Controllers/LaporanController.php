@@ -34,7 +34,7 @@ class LaporanController extends Controller
     public function index(Request $request)
     {
         $servis = $this->ambilData($request);
-        $total  = $servis->sum('total');
+        $total  = $servis->sum('total_biaya');
 
         return view('laporan.index', compact('servis', 'total'));
     }
@@ -42,7 +42,7 @@ class LaporanController extends Controller
     public function pdf(Request $request)
     {
         $servis = $this->ambilData($request);
-        $total  = $servis->sum('total');
+        $total  = $servis->sum('total_biaya');
         $dari   = $request->dari;
         $sampai = $request->sampai;
 

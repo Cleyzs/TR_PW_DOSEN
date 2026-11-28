@@ -40,7 +40,7 @@
                     <td>{{ \Carbon\Carbon::parse($s->tanggal)->format('d/m/Y') }}</td>
                     <td>{{ $s->kendaraan->no_polisi }}</td>
                     <td>{{ $s->kendaraan->pelanggan->nama }}</td>
-                    <td class="text-end">{{ number_format($s->total, 0, ',', '.') }}</td>
+                    <td class="text-end">{{ number_format($s->total_biaya, 0, ',', '.') }}</td>
                 </tr>
                 @empty
                 <tr><td colspan="5" class="text-center text-muted py-4">Tidak ada data.</td></tr>
