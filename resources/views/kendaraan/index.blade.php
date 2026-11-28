@@ -1,11 +1,22 @@
 @extends('layouts.app')
 @section('title', 'Kendaraan')
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="mb-0">Data Kendaraan</h3>
-    <a href="{{ route('kendaraan.create') }}" class="btn btn-dark">+ Tambah Kendaraan</a>
+<div class="page-header">
+    <div>
+        <span class="eyebrow">Data Master</span>
+        <h3>Data Kendaraan</h3>
+        <p>Daftar unit kendaraan beserta pemiliknya.</p>
+    </div>
+    <a href="{{ route('kendaraan.create') }}" class="btn btn-primary">
+        <span class="ico ico--car" aria-hidden="true"></span>
+        Tambah Kendaraan
+    </a>
 </div>
-<div class="card shadow-sm">
+<div class="card reveal">
+    <div class="card-header">
+        <span class="ico ico--car" aria-hidden="true"></span>
+        Daftar Kendaraan
+    </div>
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">

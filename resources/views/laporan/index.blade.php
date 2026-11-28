@@ -1,10 +1,26 @@
 @extends('layouts.app')
 @section('title', 'Laporan')
 @section('content')
-<h3 class="mb-3">Laporan Servis</h3>
 
-<div class="card shadow-sm mb-3"><div class="card-body">
-    <form method="GET" action="{{ route('laporan.index') }}" class="row g-2 align-items-end">
+<div class="page-header">
+  <div>
+    <span class="eyebrow">Rekap &amp; Arsip</span>
+    <h3>Laporan Servis</h3>
+    <p>Rekapitulasi transaksi servis per periode, siap dicetak jadi PDF.</p>
+  </div>
+  <a href="{{ route('laporan.pdf', request()->only('dari', 'sampai')) }}" class="btn btn-primary">
+    <span class="ico ico--chart" aria-hidden="true"></span>
+    Unduh PDF
+  </a>
+</div>
+
+<div class="card reveal mb-3">
+  <div class="card-header">
+    <span class="ico ico--calendar" aria-hidden="true"></span>
+    Filter Periode
+  </div>
+  <div class="card-body">
+    <form method="GET" action="{{ route('laporan.index') }}" class="row g-3 align-items-end">
         <div class="col-md-4">
             <label class="form-label">Dari tanggal</label>
             <input type="date" name="dari" value="{{ request('dari') }}"
@@ -17,16 +33,29 @@
                    class="form-control @error('sampai') is-invalid @enderror">
             @error('sampai') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
-        <div class="col-md-4 d-flex gap-2">
-            <button class="btn btn-dark">Tampilkan</button>
-            <a href="{{ route('laporan.index') }}" class="btn btn-secondary">Reset</a>
-            <a href="{{ route('laporan.pdf', request()->only('dari', 'sampai')) }}"
-               class="btn btn-danger">Unduh PDF</a>
+        <div class="col-md-4">
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-primary">
+                    <span class="ico ico--gear" aria-hidden="true"></span>
+                    Tampilkan
+                </button>
+                <a href="{{ route('laporan.index') }}" class="btn btn-secondary">Reset</a>
+                <a href="{{ route('laporan.pdf', request()->only('dari', 'sampai')) }}"
+                   class="btn btn-outline-danger">
+                    <span class="ico ico--chart" aria-hidden="true"></span>
+                    PDF
+                </a>
+            </div>
         </div>
     </form>
-</div></div>
+  </div>
+</div>
 
-<div class="card shadow-sm">
+<div class="card reveal">
+    <div class="card-header">
+        <span class="ico ico--chart" aria-hidden="true"></span>
+        Rekap Transaksi Servis
+    </div>
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">

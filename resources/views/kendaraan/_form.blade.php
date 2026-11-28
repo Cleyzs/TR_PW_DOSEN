@@ -17,5 +17,10 @@
     @error($f) <div class="invalid-feedback">{{ $message }}</div> @enderror
 </div>
 @endforeach
-<a href="{{ route('kendaraan.index') }}" class="btn btn-secondary">Batal</a>
-<button class="btn btn-dark">Simpan</button>
+<div class="d-flex flex-wrap gap-2 pt-4">
+  <a href="{{ route('kendaraan.index') }}" class="btn btn-secondary">Batal</a>
+  <button type="submit" class="btn btn-primary">
+    <span class="ico ico--gear" aria-hidden="true"></span>
+    Simpan
+  </button>
+</div>

@@ -3,6 +3,7 @@
 @section('content')
 <div class="page-header">
   <div>
+    <span class="eyebrow">Operasional</span>
     <h3>Tambah Transaksi Servis</h3>
     <p>Pilih kendaraan, tulis keluhan, lalu isi jumlah layanan yang dikerjakan.</p>
   </div>
@@ -11,7 +12,11 @@
 <form action="{{ route('servis.store') }}" method="POST">
   @csrf
 
-  <div class="card mb-3">
+  <div class="card reveal mb-3">
+    <div class="card-header">
+      <span class="ico ico--car" aria-hidden="true"></span>
+      Data Kendaraan &amp; Keluhan
+    </div>
     <div class="card-body">
       <div class="row g-3">
         <div class="col-md-8">
@@ -46,8 +51,11 @@
   @error('jumlah') <div class="alert alert-danger">{{ $message }}</div> @enderror
   @error('jumlah.*') <div class="alert alert-danger">{{ $message }}</div> @enderror
 
-  <div class="card mb-3">
-    <div class="card-header">Layanan (isi jumlah, 0 berarti tidak dipakai)</div>
+  <div class="card reveal mb-3">
+    <div class="card-header">
+      <span class="ico ico--wrench" aria-hidden="true"></span>
+      Layanan &mdash; isi jumlah, 0 berarti tidak dipakai
+    </div>
     <div class="table-responsive">
       <table class="table align-middle mb-0">
         <thead class="table-light">
@@ -82,15 +90,18 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer d-flex justify-content-between">
-      <span>Estimasi total</span>
-      <strong id="estimasi">Rp 0</strong>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <span class="estimasi-label">Estimasi total</span>
+      <strong id="estimasi" class="estimasi-total">Rp 0</strong>
     </div>
   </div>
 
-  <div class="d-flex flex-wrap gap-2">
+  <div class="d-flex flex-wrap gap-2 pt-1">
     <a href="{{ route('servis.index') }}" class="btn btn-secondary">Batal</a>
-    <button type="submit" class="btn btn-dark">Simpan</button>
+    <button type="submit" class="btn btn-primary">
+      <span class="ico ico--gear" aria-hidden="true"></span>
+      Simpan
+    </button>
   </div>
 </form>
 

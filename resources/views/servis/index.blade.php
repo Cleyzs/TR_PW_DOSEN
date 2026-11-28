@@ -3,13 +3,21 @@
 @section('content')
 <div class="page-header">
   <div>
+    <span class="eyebrow">Operasional</span>
     <h3>Transaksi Servis</h3>
     <p>Daftar kendaraan yang masuk servis beserta total biayanya.</p>
   </div>
-  <a href="{{ route('servis.create') }}" class="btn btn-dark">Tambah Servis</a>
+  <a href="{{ route('servis.create') }}" class="btn btn-primary">
+    <span class="ico ico--wrench" aria-hidden="true"></span>
+    Tambah Servis
+  </a>
 </div>
 
-<div class="card">
+<div class="card reveal">
+  <div class="card-header">
+    <span class="ico ico--calendar" aria-hidden="true"></span>
+    Daftar Transaksi
+  </div>
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">

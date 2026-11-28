@@ -6,7 +6,8 @@
 @endphp
 <div class="page-header">
   <div>
-    <h3>Detail Servis #{{ $servis->id }}</h3>
+    <span class="eyebrow">Operasional</span>
+    <h3>Detail Servis <span class="text-primary">#{{ $servis->id }}</span></h3>
     <p>Kelola status pengerjaan, pembayaran, dan keluhan servis ini.</p>
   </div>
   <a href="{{ route('servis.index') }}" class="btn btn-secondary">Kembali</a>
@@ -14,22 +15,45 @@
 
 <div class="row g-3 mb-3">
   <div class="col-md-6">
-    <div class="card h-100">
+    <div class="card h-100 reveal">
+      <div class="card-header">
+        <span class="ico ico--calendar" aria-hidden="true"></span>
+        Informasi Servis
+      </div>
       <div class="card-body">
-        <p class="mb-1"><b>Tanggal:</b> {{ $servis->tanggal->format('d/m/Y') }}</p>
-        <p class="mb-1"><b>Pemilik:</b> {{ $servis->kendaraan->pelanggan->nama }}</p>
-        <p class="mb-1"><b>Kendaraan:</b> {{ $servis->kendaraan->no_polisi }} -
-          {{ $servis->kendaraan->merek }} {{ $servis->kendaraan->tipe }}</p>
-        <p class="mb-1"><b>Status:</b>
-          <span class="badge text-bg-{{ $warna }}">{{ ucfirst($servis->status) }}</span></p>
-        <p class="mb-0"><b>Pembayaran:</b>
-          {{ $servis->status_pembayaran == 'lunas' ? 'Lunas' : 'Belum lunas' }}</p>
+        <dl class="detail-list mb-0">
+          <div>
+            <dt>Tanggal</dt>
+            <dd>{{ $servis->tanggal->format('d/m/Y') }}</dd>
+          </div>
+          <div>
+            <dt>Pemilik</dt>
+            <dd>{{ $servis->kendaraan->pelanggan->nama }}</dd>
+          </div>
+          <div>
+            <dt>Kendaraan</dt>
+            <dd>{{ $servis->kendaraan->no_polisi }} &mdash;
+              {{ $servis->kendaraan->merek }} {{ $servis->kendaraan->tipe }}</dd>
+          </div>
+          <div>
+            <dt>Status</dt>
+            <dd><span class="badge text-bg-{{ $warna }}">{{ ucfirst($servis->status) }}</span></dd>
+          </div>
+          <div>
+            <dt>Pembayaran</dt>
+            <dd>{{ $servis->status_pembayaran == 'lunas' ? 'Lunas' : 'Belum lunas' }}</dd>
+          </div>
+        </dl>
       </div>
     </div>
   </div>
 
   <div class="col-md-6">
-    <div class="card h-100">
+    <div class="card h-100 reveal">
+      <div class="card-header">
+        <span class="ico ico--gear" aria-hidden="true"></span>
+        Status &amp; Pembayaran
+      </div>
       <div class="card-body">
         <form action="{{ route('servis.status', $servis) }}" method="POST" class="mb-3">
           @csrf
@@ -41,12 +65,12 @@
                 <option value="{{ $s }}" @selected(old('status', $servis->status) == $s)>{{ ucfirst($s) }}</option>
               @endforeach
             </select>
-            <button type="submit" class="btn btn-dark text-nowrap">Ubah status</button>
+            <button type="submit" class="btn btn-primary text-nowrap">Ubah status</button>
           </div>
           @error('status') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
         </form>
 
-        <form action="{{ route('servis.pembayaran', $servis) }}" method="POST">
+        <form action="{{ route('servis.pembayaran', $servis) }}" method="POST" class="mb-0">
           @csrf
           @method('PATCH')
           <label for="status_pembayaran" class="form-label">Status pembayaran</label>
@@ -56,7 +80,7 @@
               <option value="belum_lunas" @selected(old('status_pembayaran', $servis->status_pembayaran) == 'belum_lunas')>Belum lunas</option>
               <option value="lunas" @selected(old('status_pembayaran', $servis->status_pembayaran) == 'lunas')>Lunas</option>
             </select>
-            <button type="submit" class="btn btn-dark">Simpan</button>
+            <button type="submit" class="btn btn-primary">Simpan</button>
           </div>
           @error('status_pembayaran') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
         </form>
@@ -65,7 +89,11 @@
   </div>
 </div>
 
-<div class="card mb-3">
+<div class="card reveal mb-3">
+  <div class="card-header">
+    <span class="ico ico--wrench" aria-hidden="true"></span>
+    Keluhan Pelanggan
+  </div>
   <div class="card-body">
     <form action="{{ route('servis.keluhan', $servis) }}" method="POST">
       @csrf
@@ -74,13 +102,19 @@
       <textarea id="keluhan" name="keluhan" rows="3"
                 class="form-control @error('keluhan') is-invalid @enderror">{{ old('keluhan', $servis->keluhan) }}</textarea>
       @error('keluhan') <div class="invalid-feedback">{{ $message }}</div> @enderror
-      <button type="submit" class="btn btn-dark mt-2">Simpan keluhan</button>
+      <button type="submit" class="btn btn-primary mt-3">
+        <span class="ico ico--gear" aria-hidden="true"></span>
+        Simpan keluhan
+      </button>
     </form>
   </div>
 </div>
 
-<div class="card">
-  <div class="card-header">Rincian layanan</div>
+<div class="card reveal">
+  <div class="card-header">
+    <span class="ico ico--piston" aria-hidden="true"></span>
+    Rincian Layanan
+  </div>
   <div class="table-responsive">
     <table class="table align-middle mb-0">
       <thead class="table-light">
@@ -100,7 +134,7 @@
           <td class="text-end">Rp {{ number_format($d->harga * $d->jumlah, 0, ',', '.') }}</td>
         </tr>
       @endforeach
-        <tr class="fw-bold">
+        <tr class="fw-bold total-row">
           <td colspan="3" class="text-end">Total biaya</td>
           <td class="text-end">Rp {{ number_format($servis->total_biaya, 0, ',', '.') }}</td>
         </tr>

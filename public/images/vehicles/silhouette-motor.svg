@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 260" role="img" aria-label="Siluet motor">
+  <g fill="none" stroke="#F5F5F5" stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="92" cy="180" r="54"/>
+    <circle cx="322" cy="180" r="54"/>
+    <path d="M92 180l72-64h86l72 64"/>
+    <path d="M164 116l-12-26h52"/>
+    <path d="M236 116l54-14"/>
+    <path d="M150 92h30"/>
+    <path d="M258 92l44 12"/>
+    <path d="M164 116l38 30h44"/>
+  </g>
+  <path d="M196 100h64l10 22h-84z" fill="#F5F5F5"/>
+</svg>
